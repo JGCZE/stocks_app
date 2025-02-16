@@ -209,12 +209,14 @@ const mockData = [
   },
 ];
 
+const tickerSymbols = ["meta", "tsla"];
+
 const TopStocks = async () => {
   //const { Yahoo_topStocks } = getTopStockFromYahoo();
   //console.log(">>>>", Yahoo_topStocks);
 
-  const { FMPTopStocks } = getTopStockFromFMP("meta");
-  console.log(FMPTopStocks);
+  //const FMPTopStocks = await getTopStockFromFMP(tickerSymbols);
+  //console.log(FMPTopStocks);
   //resolveFMP(mockData);
 
   const Yahoo_topStocks = {
@@ -225,14 +227,30 @@ const TopStocks = async () => {
     fiftyTwoWeeks: { min: 414.5, max: 740.91 },
   };
 
-  const FMP_topStocks = {
-    averageRevenueGrowth: 18.422959483264954,
-    averageEbitdaGrowth: 25.631609516014798,
-    averageNetIncomeGrowth: 30.50729983208185,
-    eps: 24.61,
-  };
+  const FMP_topStocks = [
+    {
+      symbol: "META",
+      averageRevenueGrowth: 18.422959483264954,
+      averageEbitdaGrowth: 25.631609516014798,
+      averageNetIncomeGrowth: 30.50729983208185,
+      eps: 24.61,
+    },
+    {
+      symbol: "TSLA",
+      averageEbitdaGrowth: 48.628993278962575,
+      averageNetIncomeGrowth: 190.10573558873142,
+      averageRevenueGrowth: 35.44152772287918,
+      eps: 2.23,
+    },
+  ];
 
-  return <div>TopStocks</div>;
+  return (
+    <div>
+      TopStocks
+      {/* component for Yahoo data */}
+      {/* component for FMP DATA */}
+    </div>
+  );
 };
 
 export default TopStocks;

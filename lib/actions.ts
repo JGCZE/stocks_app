@@ -25,7 +25,7 @@ export const getTopStockFromYahoo = async () => {
   }
 };
 
-export const getTopStockFromFMP = async (tickerSymbol: string) => {
+export const getTopStockFromFMP = async (tickerSymbols: Array<string>) => {
   try {
     const ENDPOINT = process.env.FGP_ENDPOINT;
     const API_KEY = process.env.FGP_API_KEY;
@@ -37,20 +37,24 @@ export const getTopStockFromFMP = async (tickerSymbol: string) => {
       throw new Error("FGP API KEY is not defined");
     }
 
-    const url = `${ENDPOINT}/${tickerSymbol}?period=${ANNUAL_PERIOD}&apikey=${API_KEY}`;
+    const FMPTopStocks = await Promise.all(
+      tickerSymbols.map(async (tickerSymbol) => {
+        const url = `${ENDPOINT}/${tickerSymbol}?period=${ANNUAL_PERIOD}&apikey=${API_KEY}`;
+        const response = await fetch(url);
 
-    const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Fetch doesnt work");
+        }
 
-    if (!response.ok) {
-      throw new Error("Fetch doesnt work");
-    }
+        const data = await response.json();
+        const stocks = resolveFMP(data);
 
-    const data = await response.json();
-    const FMPTopStocks = resolveFMP(data);
+        return stocks;
+      })
+    );
 
-    if (!FMPTopStocks) {
-      return null;
-    }
+    console.log("result ––––>", FMPTopStocks);
+    //const FMPTopStocks = resolveFMP(data);
 
     return FMPTopStocks;
   } catch (error) {

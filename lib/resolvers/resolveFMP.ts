@@ -215,6 +215,7 @@ const resolveFMP = (fmpData: Array<TFMPData>) => {
   console.log(">>", fmpData);
   const rawData: Array<TFMPData> = fmpData.map((data) => {
     const FMP_topStocks = {
+      symbol: data.symbol,
       date: data.calendarYear,
       revenue: data.revenue,
       ebitda: data.ebitda,
@@ -266,6 +267,7 @@ const resolveFMP = (fmpData: Array<TFMPData>) => {
       numPeriods > 0 ? netIncomeGrowthSum / numPeriods : 0;
 
     return {
+      symbol: rawData[0].symbol,
       averageRevenueGrowth: averageRevenueGrowth * 100, // Convert to percentage
       averageEbitdaGrowth: averageEbitdaGrowth * 100,
       averageNetIncomeGrowth: averageNetIncomeGrowth * 100,
