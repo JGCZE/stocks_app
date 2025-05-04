@@ -8,7 +8,9 @@ const YAHOO_ENDPOINT = "https://query2.finance.yahoo.com/v8/finance/chart/meta";
 
 export const getTopStockFromYahoo = async () => {
   try {
-    //const response = await fetch(YAHOO_ENDPOINT);
+    const response = await fetch(YAHOO_ENDPOINT, {
+      next: { revalidate: 144000 }, // cache for 4 hour
+    });
 
     if (!response.ok) {
       throw new Error("Fetch doesnt work");
@@ -17,7 +19,6 @@ export const getTopStockFromYahoo = async () => {
     const data = await response.json();
 
     const Yahoo_topStocks = resolveTopStocksFromYahoo(data);
-
     return Yahoo_topStocks;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -53,8 +54,8 @@ export const getTopStockFromFMP = async (tickerSymbols: Array<string>) => {
       })
     );
 
-    console.log("result ––––>", FMPTopStocks);
-    //const FMPTopStocks = resolveFMP(data);
+    //console.log("result ––––>", FMPTopStocks);
+    //const data = resolveFMP(FMPTopStocks);
 
     return FMPTopStocks;
   } catch (error) {

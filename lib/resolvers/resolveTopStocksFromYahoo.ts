@@ -8,6 +8,10 @@ const resolveTopStocksFromYahoo = (data: TFetchedTopStocks) => {
 
   const rawData = data.chart.result[0].meta;
 
+  if (!rawData) {
+    return undefined; /* todo lepší logování erroru */
+  }
+
   const topStocks = {
     symbol: rawData.symbol,
     price: rawData.regularMarketPrice,

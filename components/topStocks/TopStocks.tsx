@@ -1,5 +1,6 @@
-import { getTopStockFromFMP } from "@/lib/actions";
+import { getTopStockFromFMP, getTopStockFromYahoo } from "@/lib/actions";
 import resolveFMP from "@/lib/resolvers/resolveFMP";
+import TopStockReports from "./components/TopStockReports";
 
 const mockData = [
   {
@@ -212,14 +213,13 @@ const mockData = [
 const tickerSymbols = ["meta", "tsla"];
 
 const TopStocks = async () => {
-  //const { Yahoo_topStocks } = getTopStockFromYahoo();
-  //console.log(">>>>", Yahoo_topStocks);
+  const Yahoo_topStocks = await getTopStockFromYahoo();
 
   //const FMPTopStocks = await getTopStockFromFMP(tickerSymbols);
   //console.log(FMPTopStocks);
   //resolveFMP(mockData);
 
-  const Yahoo_topStocks = {
+  const Yahoo_topStocks_MOCKED = {
     symbol: "META",
     price: 736.67,
     name: "Fascebook",
@@ -230,16 +230,16 @@ const TopStocks = async () => {
   const FMP_topStocks = [
     {
       symbol: "META",
-      averageRevenueGrowth: 18.422959483264954,
-      averageEbitdaGrowth: 25.631609516014798,
-      averageNetIncomeGrowth: 30.50729983208185,
+      averageRevenueGrowth: 18.4,
+      averageEbitdaGrowth: 25.6,
+      averageNetIncomeGrowth: 30.5,
       eps: 24.61,
     },
     {
       symbol: "TSLA",
-      averageEbitdaGrowth: 48.628993278962575,
-      averageNetIncomeGrowth: 190.10573558873142,
-      averageRevenueGrowth: 35.44152772287918,
+      averageEbitdaGrowth: 48.6,
+      averageNetIncomeGrowth: 190.1,
+      averageRevenueGrowth: 35.4,
       eps: 2.23,
     },
   ];
@@ -249,6 +249,7 @@ const TopStocks = async () => {
       TopStocks
       {/* component for Yahoo data */}
       {/* component for FMP DATA */}
+      <TopStockReports data={FMP_topStocks} />
     </div>
   );
 };

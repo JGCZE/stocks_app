@@ -209,10 +209,11 @@ const mockData = [
 ];
 
 const resolveFMP = (fmpData: Array<TFMPData>) => {
-  if (!fmpData) {
+  if (!fmpData.length) {
     return null;
   }
-  console.log(">>", fmpData);
+  //console.log(">>", fmpData);
+
   const rawData: Array<TFMPData> = fmpData.map((data) => {
     const FMP_topStocks = {
       symbol: data.symbol,
@@ -277,7 +278,6 @@ const resolveFMP = (fmpData: Array<TFMPData>) => {
 
   const averageGrowth = calculateAverageGrowth(rawData);
 
-  console.log(averageGrowth);
   return averageGrowth;
 };
 
