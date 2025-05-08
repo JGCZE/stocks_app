@@ -1,14 +1,14 @@
 "use server";
 
-import { ANNUAL_PERIOD } from "./constants";
+import { ANNUAL_PERIOD, TOP_STOCKS_SYMBOLS } from "./constants";
 import resolveFMP from "./resolvers/resolveFMP";
 import resolveTopStocksFromYahoo from "./resolvers/resolveTopStocksFromYahoo";
 
-const YAHOO_ENDPOINT = "https://query2.finance.yahoo.com/v8/finance/chart/meta";
+const YAHOO_ENDPOINT = "https://query2.finance.yahoo.com/v8/finance/chart";
 
-export const getTopStockFromYahoo = async () => {
+export const getStockFromYahoo = async (symbol: string) => {
   try {
-    const response = await fetch(YAHOO_ENDPOINT, {
+    const response = await fetch(`${YAHOO_ENDPOINT}/${symbol}`, {
       next: { revalidate: 144000 }, // cache for 4 hour
     });
 
@@ -16,12 +16,43 @@ export const getTopStockFromYahoo = async () => {
       throw new Error("Fetch doesnt work");
     }
 
-    const data = await response.json();
+    const {
+      chart: { result },
+    } = await response.json();
 
-    const Yahoo_topStocks = resolveTopStocksFromYahoo(data);
-    return Yahoo_topStocks;
+    const metaData = result[0].meta;
+
+    const data = {
+      currency: metaData.currency,
+      dayLow: metaData.regularMarketDayLow,
+      dayHigh: metaData.regularMarketDayHigh,
+      symbol: metaData.symbol,
+      longName: metaData.longName,
+      price: metaData.regularMarketPrice,
+      ftwHigh: metaData.fiftyTwoWeekHigh,
+      ftwLow: metaData.fiftyTwoWeekLow,
+    };
+
+    return data;
   } catch (error) {
     console.error("Error fetching data:", error);
+    return null;
+  }
+};
+
+export const getTopStocksFromYahoo = async () => {
+  try {
+    const response = TOP_STOCKS_SYMBOLS.map((symbol) =>
+      getStockFromYahoo(symbol)
+    );
+
+    const rawResults = await Promise.allSettled(response);
+
+    const results = rawResults.filter((res) => res.status === `fulfilled`);
+
+    return results.map((r) => r.value);
+  } catch (error) {
+    console.error("Error fetching top stocks: ", error);
     return null;
   }
 };

@@ -1,21 +1,15 @@
 import React from "react";
 import StockReportCard from "./StockReportCard";
-
-type TReport = {
-  symbol: string;
-  eps: number;
-  averageEbitdaGrowth: number;
-  averageNetIncomeGrowth: number;
-  averageRevenueGrowth: number;
-};
+import { TTopStocksData } from "@/lib/types";
 
 interface IProps {
-  data: Array<TReport>;
+  data: TTopStocksData[`topStocks`];
 }
 
 const TopStockReports = ({ data }: IProps) => {
+  console.log(data);
   return (
-    <div className="grid grid-rows-3 grid-cols-4 gap-4">
+    <div className="gap-4">
       {data.map((report) => (
         <StockReportCard key={report.symbol} report={report} />
       ))}

@@ -16,15 +16,21 @@ export type TFetchedTopStocks = {
   };
 };
 
-export type TTopStocks = {
+export type TTopStocksYahoo = {
+  currency: string;
+  dayLow: number;
+  dayHigh: number;
   symbol: string;
+  longName: string;
   price: number;
-  dayRange: [number, number];
-  fiftyTwoWeeks: [number, number];
+  ftwHigh: number;
+  ftwLow: number;
+  //dayRange: [number, number];
+  //fiftyTwoWeeks: [number, number];
 };
 
 export type TTopStocksData = {
-  topStocks: TTopStocks;
+  topStocks: Array<TTopStocksYahoo>;
 };
 
 export type TFMPData = {

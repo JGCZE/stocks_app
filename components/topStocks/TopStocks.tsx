@@ -1,6 +1,6 @@
-import { getTopStockFromFMP, getTopStockFromYahoo } from "@/lib/actions";
-import resolveFMP from "@/lib/resolvers/resolveFMP";
+import { getTopStocksFromYahoo } from "@/lib/actions";
 import TopStockReports from "./components/TopStockReports";
+import { TTopStocksYahoo } from "@/lib/types";
 
 const mockData = [
   {
@@ -210,46 +210,52 @@ const mockData = [
   },
 ];
 
-const tickerSymbols = ["meta", "tsla"];
+const mockYahooData: Array<TTopStocksYahoo> = [
+  {
+    currency: "USD",
+    dayLow: 586.67,
+    dayHigh: 603.035,
+    symbol: "META",
+    longName: "Meta Platforms, Inc.",
+    price: 596.81,
+    ftwHigh: 740.91,
+    ftwLow: 442.65,
+  },
+  {
+    currency: "USD",
+    dayLow: 271.01,
+    dayHigh: 277.92,
+    symbol: "TSLA",
+    longName: "Tesla, Inc.",
+    price: 276.22,
+    ftwHigh: 488.54,
+    ftwLow: 167.41,
+  },
+  {
+    currency: "USD",
+    dayLow: 112.282,
+    dayHigh: 117.68,
+    symbol: "NVDA",
+    longName: "NVIDIA Corporation",
+    price: 117.06,
+    ftwHigh: 153.13,
+    ftwLow: 86.62,
+  },
+];
 
 const TopStocks = async () => {
-  const Yahoo_topStocks = await getTopStockFromYahoo();
-
+  //const Yahoo_topStocks = await getTopStocksFromYahoo();
+  //console.log("====", Yahoo_topStocks);
   //const FMPTopStocks = await getTopStockFromFMP(tickerSymbols);
   //console.log(FMPTopStocks);
   //resolveFMP(mockData);
-
-  const Yahoo_topStocks_MOCKED = {
-    symbol: "META",
-    price: 736.67,
-    name: "Fascebook",
-    dayRange: { min: 725.62, max: 740.89 },
-    fiftyTwoWeeks: { min: 414.5, max: 740.91 },
-  };
-
-  const FMP_topStocks = [
-    {
-      symbol: "META",
-      averageRevenueGrowth: 18.4,
-      averageEbitdaGrowth: 25.6,
-      averageNetIncomeGrowth: 30.5,
-      eps: 24.61,
-    },
-    {
-      symbol: "TSLA",
-      averageEbitdaGrowth: 48.6,
-      averageNetIncomeGrowth: 190.1,
-      averageRevenueGrowth: 35.4,
-      eps: 2.23,
-    },
-  ];
 
   return (
     <div>
       TopStocks
       {/* component for Yahoo data */}
       {/* component for FMP DATA */}
-      <TopStockReports data={FMP_topStocks} />
+      <TopStockReports data={mockYahooData} />
     </div>
   );
 };
