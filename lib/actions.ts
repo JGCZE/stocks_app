@@ -3,6 +3,7 @@
 import { ANNUAL_PERIOD, TOP_STOCKS_SYMBOLS } from "./constants";
 import resolveFMP from "./resolvers/resolveFMP";
 import resolveTopStocksFromYahoo from "./resolvers/resolveTopStocksFromYahoo";
+import { TTopStocksYahoo } from "./types";
 
 const YAHOO_ENDPOINT = "https://query2.finance.yahoo.com/v8/finance/chart";
 
@@ -13,7 +14,9 @@ export const getStockFromYahoo = async (symbol: string) => {
     });
 
     if (!response.ok) {
-      throw new Error("Fetch doesnt work");
+      throw new Error(
+        `getStockFromYahoo Fetch doesnt work: ${response.status}`
+      );
     }
 
     const {
@@ -22,17 +25,18 @@ export const getStockFromYahoo = async (symbol: string) => {
 
     const metaData = result[0].meta;
 
-    const data = {
-      currency: metaData.currency,
+    const data: TTopStocksYahoo = {
+      longName: metaData.longName,
+      symbol: metaData.symbol,
+      price: metaData.regularMarketPrice,
       dayLow: metaData.regularMarketDayLow,
       dayHigh: metaData.regularMarketDayHigh,
-      symbol: metaData.symbol,
-      longName: metaData.longName,
-      price: metaData.regularMarketPrice,
-      ftwHigh: metaData.fiftyTwoWeekHigh,
       ftwLow: metaData.fiftyTwoWeekLow,
+      ftwHigh: metaData.fiftyTwoWeekHigh,
     };
 
+    const test = resolveTopStocksFromYahoo(result);
+    console.log("XXX >>", test);
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);

@@ -1,31 +1,28 @@
-import removeEmpty from "../../utils/removeEmpty";
-import { TFetchedTopStocks } from "../types";
+import { TFetchedTopStocks, TTopStocksYahoo } from "../types";
 
-const resolveTopStocksFromYahoo = (data: TFetchedTopStocks) => {
-  if (!data) {
-    return null;
+const resolveTopStocksFromYahoo = (
+  result: Array<TFetchedTopStocks>
+): TTopStocksYahoo | undefined => {
+  if (!result.length) {
+    return undefined;
   }
 
-  const rawData = data.chart.result[0].meta;
+  const metaData = result[0].meta;
 
-  if (!rawData) {
-    return undefined; /* todo lepší logování erroru */
+  if (!metaData) {
+    throw new Error("no META DATA resolved");
   }
 
-  const topStocks = {
-    symbol: rawData.symbol,
-    price: rawData.regularMarketPrice,
-    name: rawData.shortName,
-    dayRange: {
-      min: rawData.regularMarketDayLow,
-      max: rawData.regularMarketDayHigh,
-    },
-    fiftyTwoWeeks: {
-      min: rawData.fiftyTwoWeekLow,
-      max: rawData.fiftyTwoWeekHigh,
-    },
+  const data: TTopStocksYahoo = {
+    longName: metaData.longName,
+    symbol: metaData.symbol,
+    price: metaData.regularMarketPrice,
+    dayLow: metaData.regularMarketDayLow,
+    dayHigh: metaData.regularMarketDayHigh,
+    ftwLow: metaData.fiftyTwoWeekLow,
+    ftwHigh: metaData.fiftyTwoWeekHigh,
   };
 
-  return removeEmpty(topStocks);
+  return data;
 };
 export default resolveTopStocksFromYahoo;

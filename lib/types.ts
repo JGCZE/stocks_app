@@ -1,32 +1,30 @@
 export type TFetchedTopStocks = {
-  chart: {
-    result: [
-      {
-        meta: {
-          symbol: string;
-          regularMarketPrice: number;
-          regularMarketDayLow: number;
-          regularMarketDayHigh: number;
-          fiftyTwoWeekLow: number;
-          fiftyTwoWeekHigh: number;
-          shortName: string;
-        };
-      }
-    ];
+  meta: {
+    symbol: string;
+    regularMarketPrice: number;
+    regularMarketDayLow: number;
+    regularMarketDayHigh: number;
+    fiftyTwoWeekLow: number;
+    fiftyTwoWeekHigh: number;
+    longName: string;
   };
 };
 
 export type TTopStocksYahoo = {
-  currency: string;
+  longName: string;
+  symbol: string;
+  price: number;
   dayLow: number;
   dayHigh: number;
-  symbol: string;
-  longName: string;
-  price: number;
-  ftwHigh: number;
   ftwLow: number;
+  ftwHigh: number;
+  //currency: string;
   //dayRange: [number, number];
   //fiftyTwoWeeks: [number, number];
+};
+
+export type TTablesDescription = {
+  longName: string;
 };
 
 export type TTopStocksData = {
