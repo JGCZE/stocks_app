@@ -69,6 +69,7 @@ export const getTopStockFromFMP = async (tickerSymbols: Array<string>) => {
     if (!ENDPOINT) {
       throw new Error("FGP ENDPOINT is not defined");
     }
+
     if (!API_KEY) {
       throw new Error("FGP API KEY is not defined");
     }

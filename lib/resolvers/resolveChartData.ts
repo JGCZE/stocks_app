@@ -1,4 +1,3 @@
-import { mockedChartAdjustedData } from "../mockedYahooData";
 
 export type TChartData = {
   meta: {
@@ -7,29 +6,60 @@ export type TChartData = {
   };
   timestamp: Array<number>;
   indicators: {
-    quote: Array<unknown>;
+    quote: Array<{
+      low: Array<number>;
+      high: Array<number>;
+    }>;
     adjclose: Array<{
       adjclose: Array<number>;
     }>;
   };
 };
 
-export const resolveChartData = ({ result }: { result: Array<TChartData> }) => {
-  if (!result || !Array.isArray(result)) {
+interface TPreparedChartData {
+  period: string;
+  min: number;
+  max: number;
+}
+
+
+export const resolveChartData = ({ result }: { result: Array<TChartData> }): Array<TPreparedChartData> => {
+  if (!result.length || !Array.isArray(result)) {
     throw new Error("Invalid result format");
   }
 
-  const { meta, indicators } = result[0];
+  const { meta, timestamp, indicators } = result[0];
 
-  if (meta.dataGranularity !== "3mo" || meta.range !== "max") {
+  if (meta.dataGranularity !== "3mo" || meta.range !== "max" || !timestamp.length) {
     throw new Error("Date granularity is not 3mo or range is not max");
   }
 
-  const chardData = indicators.adjclose[0].adjclose;
+  const { low, high } = indicators.quote[0];
 
-  if (!chardData) {
-    throw new Error("No adjclose data found");
+  if (!low.length || !high.length) {
+    throw new Error("No indicators data found");
   }
 
-  console.log("XXX >>", chardData);
-};
+  if (low.length !== high.length || low.length !== timestamp.length) {
+    throw new Error("Low and high data arrays are not the same length");
+  }
+
+  const dateFormatter = new Intl.DateTimeFormat("en-GB", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+
+  return timestamp.map((time, index) => {
+    const lowValue = Math.round(low[index] * 100) / 100;
+    const highValue = Math.round(high[index] * 100) / 100;
+
+    const period = dateFormatter.format(new Date(time * 1000));
+
+    return {
+      period,
+      min: lowValue,
+      max: highValue,
+    };
+  });
+}

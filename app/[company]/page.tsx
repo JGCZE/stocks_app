@@ -1,16 +1,20 @@
-import { TESTComponent } from "@/app/[company]/components/TESTComponent";
+import { getCompanyChartData } from "@/lib/companyActions";
+import ChartComponent from "./components/ChartComponent";
 
 const page = async ({ params }: { params: Promise<{ company: string }> }) => {
   const { company: tickerSymbol } = await params;
 
   //const companyData = await getCompanyData(company);
-  //const chartsData = await getCompanyChartData(tickerSymbol);
-  //console.log("chartsData ........ >>>", chartsData);
+  const chartsData = await getCompanyChartData(tickerSymbol);
+  
+  if (!chartsData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
       {tickerSymbol}
-      <TESTComponent />
+      <ChartComponent chartsData={chartsData}/>
     </div>
   );
 };

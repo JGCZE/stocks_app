@@ -38,3 +38,9 @@ export type TFMPData = {
   eps: number;
   netIncome: number;
 };
+
+export type TFormatedChardData = {
+  period: string;
+  min: number;
+  max: number;
+};

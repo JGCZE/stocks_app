@@ -46,7 +46,7 @@ article {
     --radius: 0.5rem;
   }
   .dark {
-    --background: 230 60% 15%;
+    --background: 230 60% 25%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
