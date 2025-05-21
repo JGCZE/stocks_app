@@ -1,6 +1,7 @@
 "use client";
 
 import { TFormatedChardData } from "@/lib/types";
+import { useState } from "react";
 import {
   Bar,
   BarChart,
@@ -11,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import SelectTimeRange from "./SelectTimeRange";
 
 type TPayload = {
   payload: {
@@ -26,26 +28,62 @@ interface TooltipProps {
 }
 
 interface IProps {
-  chartsData: Array<TFormatedChardData>
+  chartData: Array<TFormatedChardData>
+  granularity: string;
 }
 
-const ChartComponent = ({ chartsData }: IProps ) => {
+const getTimeRangeMultiplier = (granularity: string): number => {
+  switch (granularity) {
+    case "3mo":
+      return 4;
+    case "6mo":
+      return 2;
+  }
+  return 0;
+};
 
-  const dataWithRange = chartsData.map((d) => ({
+const ChartComponent = ({ chartData, granularity }: IProps) => {
+  const [selectedChartsData, setSelectedChartsData] = useState<Array<TFormatedChardData>>(chartData)
+
+  const dataWithRange = selectedChartsData.map((d) => ({
     ...d,
     min: d.min,
     max: d.max - d.min,
   }));
 
 
+  const handleCategoryChange = (year: number) => {
+    const timeRange = getTimeRangeMultiplier(granularity);
+    const newData = chartData.slice(- (timeRange * year));
+    setSelectedChartsData(newData);
+  }
+
+  const handleSelectedTimeRange = (year: string) => {
+    switch (year) {
+      case "1y":
+        return handleCategoryChange(1);
+      case "2y":
+        return handleCategoryChange(2);
+      case "3y":
+        return handleCategoryChange(3);
+      case "4y":
+        return handleCategoryChange(4);
+      case "5y":
+        return handleCategoryChange(5);
+      case "10y":
+        return handleCategoryChange(10);
+    }
+  }
+
+
   const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (!active || !payload || !payload.length) {
       return null;
     }
-    
+
     const { min, max } = payload[0].payload;
     const diff = Math.round(max * 100) / 100;
- 
+
     return (
       <div className="bg-white p-2 border shadow-sm">
         <p className="font-semibold">{label}</p>
@@ -58,6 +96,8 @@ const ChartComponent = ({ chartsData }: IProps ) => {
 
   return (
     <div>
+      <SelectTimeRange handleSelectedTimeRange={handleSelectedTimeRange} />
+
       <ResponsiveContainer width="100%" height={500} className={"bg-white"}>
         <BarChart
           data={dataWithRange}

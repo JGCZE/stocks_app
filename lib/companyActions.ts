@@ -11,9 +11,14 @@ import { TFormatedChardData } from "./types";
 };
  */
 
+type TChartData = {
+  chartData: Array<TFormatedChardData>;
+  granularity: string;
+};
+
 export const getCompanyChartData = async (
   tickerSymbol: string
-): Promise<Array<TFormatedChardData> | undefined> => {
+): Promise<TChartData | undefined> => {
   try {
     const endpoint = process.env.YAHOO_CHART_ENDPOINT;
     const url = `${endpoint}/${tickerSymbol}?${MAX_RANGE}`;
@@ -30,7 +35,22 @@ export const getCompanyChartData = async (
       throw new Error("Error fetching chart data", chart.error);
     }
 
-    return resolveChartData(chart);
+    const granularity = chart.result[0].meta.dataGranularity;
+
+    if (!granularity) {
+      throw new Error("No granularity data found");
+    }
+
+    const chartData = resolveChartData(chart);
+
+    if (!chartData.length || !Array.isArray(chartData)) {
+      throw new Error("Invalid chart data format");
+    }
+  
+    return {
+      chartData,
+      granularity,
+    }
   } catch (error) {
     console.error("getCompanyChartData error:", error);
     return undefined;

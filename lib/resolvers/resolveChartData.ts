@@ -1,3 +1,4 @@
+import { TFormatedChardData } from "../types";
 
 export type TChartData = {
   meta: {
@@ -16,14 +17,7 @@ export type TChartData = {
   };
 };
 
-interface TPreparedChartData {
-  period: string;
-  min: number;
-  max: number;
-}
-
-
-export const resolveChartData = ({ result }: { result: Array<TChartData> }): Array<TPreparedChartData> => {
+export const resolveChartData = ({ result }: { result: Array<TChartData> }): Array<TFormatedChardData> => {
   if (!result.length || !Array.isArray(result)) {
     throw new Error("Invalid result format");
   }
