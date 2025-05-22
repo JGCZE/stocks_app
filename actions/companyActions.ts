@@ -1,8 +1,8 @@
 "use server";
 
-import { MAX_RANGE } from "./constants";
-import { resolveChartData } from "./resolvers/resolveChartData";
-import { TFormatedChardData } from "./types";
+import { MAX_RANGE } from "../lib/constants";
+import { resolveChartData } from "../lib/resolvers/resolveChartData";
+import { TFormatedChardData } from "../lib/types";
 
 /* export const getCompanyData = async (tickerSybol: string) => {
   try {

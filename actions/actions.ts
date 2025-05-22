@@ -1,9 +1,9 @@
 "use server";
 
-import { ANNUAL_PERIOD, TOP_STOCKS_SYMBOLS } from "./constants";
-import resolveFMP from "./resolvers/resolveFMP";
-import resolveTopStocksFromYahoo from "./resolvers/resolveTopStocksFromYahoo";
-import { TTopStocksYahoo } from "./types";
+import { TTopStocksYahoo } from "@/lib/types";
+import { ANNUAL_PERIOD, TOP_STOCKS_SYMBOLS } from "@/lib/constants";
+import resolveFMP from "@/lib/resolvers/resolveFMP";
+import resolveTopStocksFromYahoo from "@/lib/resolvers/resolveTopStocksFromYahoo";
 
 const YAHOO_ENDPOINT = "https://query2.finance.yahoo.com/v8/finance/chart";
 

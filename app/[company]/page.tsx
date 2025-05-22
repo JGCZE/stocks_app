@@ -1,4 +1,4 @@
-import { getCompanyChartData } from "@/lib/companyActions";
+import { getCompanyChartData } from "@/actions/companyActions";
 import ChartComponent from "./components/ChartComponent";
 
 const page = async ({ params }: { params: Promise<{ company: string }> }) => {
@@ -16,7 +16,10 @@ const page = async ({ params }: { params: Promise<{ company: string }> }) => {
   return (
     <div>
       {tickerSymbol}
-      <ChartComponent chartData={chartData} granularity={granularity}/>
+      <ChartComponent
+        chartData={chartData}
+        granularity={granularity}
+      />
     </div>
   );
 };

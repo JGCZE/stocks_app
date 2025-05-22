@@ -1,7 +1,6 @@
 import TopStockReports from "./components/TopStockReports";
 import TableDescription from "./components/TableDescription";
 import { mockYahooData } from "@/lib/mockedYahooData";
-import { getTopStocksFromYahoo } from "@/lib/actions";
 
 const TopStocks = async () => {
   //const Yahoo_topStocks = await getTopStocksFromYahoo();

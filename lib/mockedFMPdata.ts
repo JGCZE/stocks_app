@@ -1,4 +1,4 @@
-export const mockData = [
+export const mockFMPData = [
   {
     date: "2024-12-31",
     symbol: "META",
