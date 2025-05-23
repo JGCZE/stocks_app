@@ -1,6 +1,6 @@
 import TopStocks from "@/components/topStocks/TopStocks";
 
-const Home = () => {
+const Home = async () => {
   return (
     <div>
       <TopStocks />

@@ -5,7 +5,9 @@ const page = async ({ params }: { params: Promise<{ company: string }> }) => {
   const { company: tickerSymbol } = await params;
 
   //const companyData = await getCompanyData(company);
-  const data = await getCompanyChartData(tickerSymbol);
+  //const data = await getCompanyChartData(tickerSymbol);
+
+  const data = undefined;
 
   if (!data) {
     return <div>Company data not found</div>;
@@ -16,10 +18,12 @@ const page = async ({ params }: { params: Promise<{ company: string }> }) => {
   return (
     <div>
       {tickerSymbol}
-      <ChartComponent
-        chartData={chartData}
-        granularity={granularity}
-      />
+      {chartData && granularity && (
+        <ChartComponent
+          chartData={chartData}
+          granularity={granularity}
+        />
+      )}
     </div>
   );
 };
