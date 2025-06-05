@@ -1,13 +1,21 @@
-export const resolveKeyMetrics = (data: any) => {
+type TKeyMetricsProps = Record<string, string | number>;
+type TKeyMetrics = Record<string, string | number>;
 
-  const updatedData = data.value.map((item: any) => {
+export const resolveKeyMetrics = ({ value }: { value: Array<TKeyMetricsProps>}): Array<TKeyMetrics> => {
+
+  const updatedData = value.map((
+    { symbol, marketCap, peRatio, roe, revenuePerShare, netIncomePerShare }
+  ) => {
+    
     return {
-      marketCap: item.marketCap,
-      peRatio: item.peRatio,
-      roe: item.roe,
+      symbol,
+      marketCap,
+      netIncomePerShare,
+      peRatio,
+      revenuePerShare,
+      roe,
   }}
   )
 
-  console.log("updatedData", updatedData);
   return updatedData;
 };

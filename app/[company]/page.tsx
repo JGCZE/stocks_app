@@ -18,6 +18,7 @@ const page = async ({ params }: { params: Promise<{ company: string }> }) => {
   return (
     <div>
       {tickerSymbol}
+
       {chartData && granularity && (
         <ChartComponent
           chartData={chartData}

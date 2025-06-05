@@ -22,7 +22,7 @@ const fetchFMP = async (symbol: string, statement: string) => {
   }
 };
 
-const getCFStatement = async (symbol: string) => {
+/* const getCFStatement = async (symbol: string) => {
   const fetchedData = await fetchFMP(symbol, "cash-flow-statement");
 
   if (!fetchedData) {
@@ -51,20 +51,24 @@ const getKeyMetrics = async (symbol: string) => {
   const data = await fetchedData.json();
   return resolveKeyMetrics(data);
 }
-
+ */
 export const getAllStocksData = async (symbol: string) => {
   try {
-    const [CFStatement, incomeStatement, keyMetrics] = await Promise.allSettled([
-      getCFStatement(symbol),
-      getIncomeStatement(symbol),
-      getKeyMetrics(symbol),
+    const [CFStatement, incomeStatement, fetchedKeyMetrics] = await Promise.allSettled([
+      fetchFMP(symbol, "cash-flow-statement"),
+      fetchFMP(symbol, "income-statement"),
+      fetchFMP(symbol, "key-metrics"),
     ]);
 
-    
+    if (CFStatement.status === "rejected" || incomeStatement.status === "rejected" || fetchedKeyMetrics.status === "rejected") {
+      throw new Error("Failed to fetch one or more statements");
+    }
 
-    console.log("CFStatement >>", CFStatement);
+    const keyMetrics = resolveKeyMetrics(fetchedKeyMetrics);
+
+    /* console.log("CFStatement >>", CFStatement);
     console.log("incomeStatement >>", incomeStatement);
-    console.log("keyMetrics >>", keyMetrics);
+    console.log("keyMetrics >>", keyMetrics); */
     // Check if the data is valid
     return {
       CFStatement,

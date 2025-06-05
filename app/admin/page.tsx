@@ -3,6 +3,7 @@ import React from 'react'
 import { ClientComponent } from './components/ClientComponent';
 import { mockedKeyMetrics } from '@/lib/mockedFMPdata';
 import { resolveKeyMetrics } from '@/lib/resolvers/resolveKeyMetrics';
+import resolveIncomeStatements from '@/lib/resolvers/resolveIncomeStatements';
 
 export const onFetch = async () => {
   await getStockDataAndSave();
@@ -11,13 +12,16 @@ export const onFetch = async () => {
 const Admin = async () => {
 
   // TESTING
-  const data = mockedKeyMetrics;
-  resolveKeyMetrics(data);
+  //const data = mockedKeyMetrics;
+  //resolveKeyMetrics(data);
+
+  const dataIncome = mockedKeyMetrics
+  resolveIncomeStatements(dataIncome);
 
   return (
     <div>
       <p> this button fetch all 10 stocks data </p>
-      {/* <ClientComponent /> */}
+      <ClientComponent />
     </div>
   )
 }
