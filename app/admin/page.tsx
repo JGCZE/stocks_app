@@ -1,22 +1,28 @@
 import { getStockDataAndSave } from '@/actions/fetchAndSave';
 import React from 'react'
 import { ClientComponent } from './components/ClientComponent';
-import { mockedKeyMetrics } from '@/lib/mockedFMPdata';
-import { resolveKeyMetrics } from '@/lib/resolvers/resolveKeyMetrics';
-import resolveIncomeStatements from '@/lib/resolvers/resolveIncomeStatements';
 
 export const onFetch = async () => {
-  await getStockDataAndSave();
+  try {
+    const data = await getStockDataAndSave();
+    return data;
+  } catch (error) {
+    console.error("Error fetching and saving stock data:", error);
+  }
 }
 
 const Admin = async () => {
+  const data = await onFetch();
 
-  // TESTING
-  //const data = mockedKeyMetrics;
-  //resolveKeyMetrics(data);
+  if (!data) {
+    return <div>Error fetching data</div>;
+  }
 
-  const dataIncome = mockedKeyMetrics
-  resolveIncomeStatements(dataIncome);
+  console.log("Fetched data: >>", data);
+
+  // todo api route to fetch all stocks data
+  // todo save all stocks data to db
+  // todo display all stocks data in table
 
   return (
     <div>

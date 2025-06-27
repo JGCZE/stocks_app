@@ -1,84 +1,59 @@
 "use server"
 
-import { resolveKeyMetrics } from "@/lib/resolvers/resolveKeyMetrics";
+import resolveCFStatements from "@/lib/resolvers/financials/resolveCFStatements";
+import resolveIncomeStatement from "@/lib/resolvers/financials/resolveIncomeStatements";
+import { resolveKeyMetrics } from "@/lib/resolvers/financials/resolveKeyMetrics";
 
 const BASE_ENDPOINT = process.env.FGP_ENDPOINT;
+const API_KEY = process.env.FGP_API_KEY;
+
+if (!BASE_ENDPOINT || !API_KEY) {
+  throw new Error("Missing required environment variables FGP_ENDPOINT or FGP_API_KEY");
+}
+
 
 const fetchFMP = async (symbol: string, statement: string) => {
   try {
-    const URL = `${BASE_ENDPOINT}/${statement}/${symbol}?period=annual&apikey=${process.env.FGP_API_KEY}`;
-    
-    const response = await fetch(URL, { next: { revalidate: 24 * 3600 } }); // 1 day
-    
+    const url = new URL(`${BASE_ENDPOINT}/${statement}/${symbol}`);
+    url.searchParams.append('period', 'annual');
+    url.searchParams.append('apikey', API_KEY);
+
+    //`${BASE_ENDPOINT}/${statement}/${symbol}?period=annual&apikey=${process.env.FGP_API_KEY}`;
+
+    const response = await fetch(url.toString(), { next: { revalidate: 24 * 3600 } }); // 1 day
+
     if (!response.ok) {
-      throw new Error("Fetch doesnt work");
+      const errorBody = await response.text();
+      throw new Error(`API request failed for ${url}. Status: ${response.status}. Body: ${errorBody}`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error fetching data:", error);
     return null;
   }
 };
 
-/* const getCFStatement = async (symbol: string) => {
-  const fetchedData = await fetchFMP(symbol, "cash-flow-statement");
+const getSingleStockData = async (symbol: string): TODOTYPES => {
+  const [fetchedCFStatement, fetchedIncomeStatement, fetchedKeyMetrics] = await Promise.allSettled([
+    fetchFMP(symbol, "cash-flow-statement"),
+    fetchFMP(symbol, "income-statement"),
+    fetchFMP(symbol, "key-metrics"),
+  ]);
 
-  if (!fetchedData) {
-    throw new Error("Failed to fetch cash flow statement");
-  }
-  return fetchedData; // todo resolver
-};
-
-const getIncomeStatement = async (symbol: string) => {
-  const fetchedData = await fetchFMP(symbol, "income-statement");
-
-  if (!fetchedData) {
-    throw new Error("Failed to fetch income statement");
+  if (fetchedCFStatement.status === "rejected" || fetchedIncomeStatement.status === "rejected" || fetchedKeyMetrics.status === "rejected") {
+    throw new Error("Failed to fetch one or more statements");
   }
 
-  return fetchedData; // todo resolver
-}
+  const keyMetrics = resolveKeyMetrics(fetchedKeyMetrics.value);
+  const incomeStatement = resolveIncomeStatement(fetchedIncomeStatement);
+  const CFStatement = resolveCFStatements(fetchedCFStatement);
 
-const getKeyMetrics = async (symbol: string) => {
-  const fetchedData = await fetchFMP(symbol, "key-metrics");
-  
-  if (!fetchedData) {
-    throw new Error("Failed to fetch key metrics");
-  }
-  
-  const data = await fetchedData.json();
-  return resolveKeyMetrics(data);
-}
- */
-export const getAllStocksData = async (symbol: string) => {
-  try {
-    const [CFStatement, incomeStatement, fetchedKeyMetrics] = await Promise.allSettled([
-      fetchFMP(symbol, "cash-flow-statement"),
-      fetchFMP(symbol, "income-statement"),
-      fetchFMP(symbol, "key-metrics"),
-    ]);
-
-    if (CFStatement.status === "rejected" || incomeStatement.status === "rejected" || fetchedKeyMetrics.status === "rejected") {
-      throw new Error("Failed to fetch one or more statements");
-    }
-
-    const keyMetrics = resolveKeyMetrics(fetchedKeyMetrics);
-
-    /* console.log("CFStatement >>", CFStatement);
-    console.log("incomeStatement >>", incomeStatement);
-    console.log("keyMetrics >>", keyMetrics); */
-    // Check if the data is valid
-    return {
-      CFStatement,
-      incomeStatement,
-      keyMetrics,
-    };
-  } catch (error) {
-    console.error("Error fetching all stocks data:", error);
-    throw new Error("Failed to fetch all stocks data");
-  }
+  return {
+    CFStatement,
+    incomeStatement,
+    keyMetrics,
+  };
 }
 
 export const getStockDataAndSave = async () => {
@@ -88,12 +63,17 @@ export const getStockDataAndSave = async () => {
       "MSFT",
     ];
 
-    const allStocksData = await Promise.allSettled(
-      symbols.map(async (symbol) => getAllStocksData(symbol))
-    );
+    const allStocksDataPromise = symbols.map((symbol) => getSingleStockData(symbol));
 
-    console.log("allStocksData >>>", allStocksData);
-    return allStocksData;
+    const results = await Promise.allSettled(allStocksDataPromise);
+
+   /*  const allStocksData = await Promise.allSettled(
+      symbols.map(async (symbol) => getSingleStockData(symbol))
+    ); */
+
+    //console.log("allStocksData >>>", allStocksData);
+    //console.dir(allStocksData, { depth: null, colors: true });
+    return results;
   } catch (error) {
     console.error("Error fetching and saving stock data:", error);
   }
