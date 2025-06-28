@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 type TResolvedCFStatementItem = z.infer<typeof resolvedCFStatementsSchema>;
-type TResolvedCFStatements = Array<TResolvedCFStatementItem>;
+export type TResolvedCFStatements = Array<TResolvedCFStatementItem>;
 
 const apiCFStatementsSchema = z.object({
   symbol: z.string(),
@@ -21,14 +21,13 @@ const resolvedCFStatementsSchema = apiCFStatementsSchema.transform((data) => ({
   netDividendsPaid: Number(data.netDividendsPaid) || 0,
 }));
 
-const resolveCFStatements = ({ value }: { value: TResolvedCFStatements }) => {
+const resolveCFStatements = (value: TResolvedCFStatements) => {
   if (!Array.isArray(value)) {
     throw new Error("resolveCFStatements - Input value is not an array");
   }
 
   try {
     const result = z.array(resolvedCFStatementsSchema).parse(value);
-    console.log("Resolved CF Statements:", result);
 
     if (!result || !Array.isArray(result)) {
       throw new Error(

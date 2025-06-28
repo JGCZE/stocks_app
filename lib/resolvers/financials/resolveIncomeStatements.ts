@@ -3,7 +3,7 @@ import { z } from "zod";
 type TResolvedIncomeStatementItem = z.infer<
   typeof resolvedIncomeStatementSchema
 >;
-type TResolvedIncomeStatement = Array<TResolvedIncomeStatementItem>;
+export type TResolvedIncomeStatement = Array<TResolvedIncomeStatementItem>;
 
 const apiIncomeStatementSchema = z.object({
   symbol: z.string(),
@@ -29,11 +29,9 @@ const resolvedIncomeStatementSchema = apiIncomeStatementSchema.transform(
   })
 );
 
-const resolveIncomeStatement = ({
-  value,
-}: {
-  value: Array<unknown>;
-}): TResolvedIncomeStatement => {
+const resolveIncomeStatement = (
+  value: TResolvedIncomeStatement
+): TResolvedIncomeStatement => {
   if (!Array.isArray(value)) {
     throw new Error("resolveIncomeStatement - Input value is not an array");
   }
