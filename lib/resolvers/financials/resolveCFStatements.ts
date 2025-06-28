@@ -9,8 +9,8 @@ const apiCFStatementsSchema = z.object({
   freeCashFlow: z.union([z.string(), z.number()]),
   capitalExpenditure: z.union([z.string(), z.number()]),
   netChangeInCash: z.union([z.string(), z.number()]),
-  dividendsPaid: z.union([z.string(), z.number()]),
-})
+  netDividendsPaid: z.union([z.string(), z.number()]),
+});
 
 const resolvedCFStatementsSchema = apiCFStatementsSchema.transform((data) => ({
   symbol: String(data.symbol),
@@ -18,9 +18,8 @@ const resolvedCFStatementsSchema = apiCFStatementsSchema.transform((data) => ({
   freeCashFlow: Number(data.freeCashFlow) || 0,
   capitalExpenditure: Number(data.capitalExpenditure) || 0,
   netChangeInCash: Number(data.netChangeInCash) || 0,
-  dividendsPaid: Number(data.dividendsPaid) || 0,
+  netDividendsPaid: Number(data.netDividendsPaid) || 0,
 }));
-
 
 const resolveCFStatements = ({ value }: { value: TResolvedCFStatements }) => {
   if (!Array.isArray(value)) {
@@ -29,14 +28,21 @@ const resolveCFStatements = ({ value }: { value: TResolvedCFStatements }) => {
 
   try {
     const result = z.array(resolvedCFStatementsSchema).parse(value);
+    console.log("Resolved CF Statements:", result);
 
     if (!result || !Array.isArray(result)) {
-      throw new Error("resolveCFStatements - Result is not an array or does not contain valid data");
+      throw new Error(
+        "resolveCFStatements - Result is not an array or does not contain valid data"
+      );
     }
 
     return result;
   } catch (error) {
-    throw new Error(`resolveCFStatements - Error parsing data: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `resolveCFStatements - Error parsing data: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 };
 
