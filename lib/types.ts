@@ -44,3 +44,5 @@ export type TFormatedChardData = {
   min: number;
   max: number;
 };
+
+export type TSAPData = Array<Record<string, string | number>>

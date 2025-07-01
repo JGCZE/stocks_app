@@ -12,7 +12,7 @@ const TopStocks = async () => {
   const tableHeaders = Object.keys(mockYahooData[0]);
 
   return (
-    <div className="mx-24">
+    <div className="">
       <h2>Top {mockYahooData.length} stocks</h2>
       {/* component for Yahoo data */}
       {/* component for FMP DATA */}

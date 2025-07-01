@@ -1,4 +1,6 @@
-[
+import { TSAPData } from "./types";
+
+export const SAPData: TSAPData = [
   {
     "Symbol": "A",
     "Security": "Agilent Technologies",
