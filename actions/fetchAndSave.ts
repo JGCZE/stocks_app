@@ -1,5 +1,6 @@
 "use server";
 
+import financialMerging from "@/lib/resolvers/financials/financialsMerging";
 import resolveAllFinancials from "@/lib/resolvers/financials/resolveAllFinancials";
 
 const BASE_ENDPOINT = process.env.FGP_ENDPOINT;
@@ -14,10 +15,7 @@ if (!BASE_ENDPOINT || !API_KEY) {
 const fetchFMP = async (symbol: string, statement: string) => {
   try {
     const url = new URL(`${BASE_ENDPOINT}/${statement}?symbol=${symbol}`);
-    //url.searchParams.append("period", "annual");
     url.searchParams.append("apikey", API_KEY);
-
-    //const url = `${BASE_ENDPOINT}/${statement}?symbol=${symbol}&apikey=${process.env.FGP_API_KEY}`;
 
     const response = await fetch(url.toString(), {
       next: { revalidate: 24 * 3600 },
@@ -30,7 +28,6 @@ const fetchFMP = async (symbol: string, statement: string) => {
       );
     }
 
-    //const data = await response.json();
     return await response.json();
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -38,36 +35,49 @@ const fetchFMP = async (symbol: string, statement: string) => {
   }
 };
 
-const getSingleStockData = async (symbol: string): TODOTYPES => {
-  const [fetchedCFStatement, fetchedIncomeStatement, fetchedKeyMetrics] =
-    await Promise.all([
-      fetchFMP(symbol, "cash-flow-statement"),
-      fetchFMP(symbol, "income-statement"),
-      fetchFMP(symbol, "key-metrics"),
-    ]);
+export type TFinancialsData = {
+  symbol: string;
+  date: string;
+  freeCashFlow: number;
+  capitalExpenditure: number;
+  netChangeInCash: number;
+  netDividendsPaid: number;
+  revenue: number;
+  costOfRevenue: number;
+  grossProfit: number;
+  ebitda: number;
+  netIncome: number;
+  eps: number;
+};
 
-  if (!fetchedCFStatement || !fetchedIncomeStatement || !fetchedKeyMetrics) {
+const getSingleStockData = async (
+  symbol: string
+): Promise<Array<TFinancialsData>> => {
+  const [fetchedCFStatement, fetchedIncomeStatement] = await Promise.all([
+    fetchFMP(symbol, "cash-flow-statement"),
+    fetchFMP(symbol, "income-statement"),
+    // TEMPORARY DISABLED BECAUSE OF API CHANGES FROM THEIR SIDE
+    //fetchFMP(symbol, "key-metrics"),
+  ]);
+
+  if (!fetchedCFStatement || !fetchedIncomeStatement) {
     throw new Error("Failed to fetch one or more statements");
   }
 
   const resolvedFinancials = resolveAllFinancials(
     fetchedCFStatement,
-    fetchedIncomeStatement,
-    fetchedKeyMetrics
+    fetchedIncomeStatement
   );
 
-  return {
-    resolvedFinancials,
-  };
+  const financialsData = financialMerging(resolvedFinancials);
+
+  return financialsData;
 };
 
 export const getGlobalStockData = async () => {
   try {
-    const symbols = [
-      // TESTING
-      "AAPL",
-      "MSFT",
-    ];
+    // TESTING
+    const symbols = ["AAPL", "MSFT"];
 
     const allStocksDataPromise = symbols.map((symbol) =>
       getSingleStockData(symbol)
@@ -83,6 +93,7 @@ export const getGlobalStockData = async () => {
       throw new Error("No results returned from stock data fetch");
     }
 
+    console.log("Fetched stock data: XXXXX");
     return results;
   } catch (error) {
     console.error("Error fetching and saving stock data:", error);

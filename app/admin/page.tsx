@@ -5,7 +5,11 @@ import { getGlobalStockData } from "@/actions/fetchAndSave";
 export const onFetch = async () => {
   try {
     const data = await getGlobalStockData();
-    console.log("FE >>", data);
+
+    if (!data) {
+      throw new Error("Data are missing");
+    }
+
     return data;
   } catch (error) {
     console.error("Error fetching and saving stock data:", error);

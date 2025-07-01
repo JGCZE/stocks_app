@@ -4,27 +4,34 @@ import resolveCFStatements, {
 import resolveIncomeStatement, {
   TResolvedIncomeStatement,
 } from "./resolveIncomeStatements";
-import { resolveKeyMetrics, TResolvedKeyMetrics } from "./resolveKeyMetrics";
+
+export interface IReturn {
+  resolvedCFStatement: TResolvedCFStatements;
+  resolvedIncomeStatement: TResolvedIncomeStatement;
+}
 
 const resolveAllFinancials = (
   fetchedCFStatement: TResolvedCFStatements,
-  fetchedIncomeStatement: TResolvedIncomeStatement,
-  fetchedKeyMetrics: TResolvedKeyMetrics
-) => {
+  fetchedIncomeStatement: TResolvedIncomeStatement
+): IReturn => {
   const resolvedCFStatement = resolveCFStatements(fetchedCFStatement);
   const resolvedIncomeStatement = resolveIncomeStatement(
     fetchedIncomeStatement
   );
-  const resolvedKeyMetrics = resolveKeyMetrics(fetchedKeyMetrics);
+  // TEMPORARY DISABLED BECAUSE OF API CHANGES FROM THEIR SIDE
+  //const resolvedKeyMetrics = resolveKeyMetrics(fetchedKeyMetrics);
 
-  if (!resolvedKeyMetrics || !resolvedIncomeStatement || !resolvedCFStatement) {
-    throw new Error("Failed to resolve one or more statements");
+  if (!resolvedIncomeStatement) {
+    throw new Error("Failed to resolve income statement");
+  }
+
+  if (!resolvedCFStatement) {
+    throw new Error("Failed to resolve cash flow statement");
   }
 
   return {
     resolvedCFStatement,
     resolvedIncomeStatement,
-    resolvedKeyMetrics,
   };
 };
 

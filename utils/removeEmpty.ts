@@ -1,9 +1,6 @@
 const isNullish = (value: unknown): boolean => (value ?? null) === null;
 
-const removeEmpty = <T extends object>(
-  obj: T,
-  isArray = false
-): Required<T> => {
+const removeEmpty = <T extends object>(obj: T, isArray = false): Partial<T> => {
   const reducedObject = (Object.keys(obj) as Array<keyof T>).reduce(
     (result, key) => {
       if (!isNullish(obj[key])) {
