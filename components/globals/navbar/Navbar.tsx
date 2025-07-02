@@ -11,6 +11,7 @@ const NavBar = async () => {
         <Search />
 
         <div className="flex justify-center items-center gap-4 w-96">
+          <Link href="/admin" className="font-bold">Home</Link>
           <Link href="/admin" className="font-bold">Admin</Link>
           <Link href="/admin" className="font-bold">Login</Link>
           <Link href="/admin" className="font-bold">Selected</Link>

@@ -45,4 +45,13 @@ export type TFormatedChardData = {
   max: number;
 };
 
-export type TSAPData = Array<Record<string, string | number>>
+export type TSAPData = Array<{
+  Symbol: string;
+  Security: string;
+  "GICS Sector": string;
+  "GICS Sub-Industry": string;
+  "Headquarters Location": string;
+  CIK: number;
+  "Date added": string;
+  "Founded": number | string;
+}>
