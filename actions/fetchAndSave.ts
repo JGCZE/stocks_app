@@ -2,6 +2,7 @@
 
 import financialMerging from "@/lib/resolvers/financials/financialsMerging";
 import resolveAllFinancials from "@/lib/resolvers/financials/resolveAllFinancials";
+import resolveGlobalStockData from "@/lib/resolvers/financials/resolveGlobalStockData";
 
 const BASE_ENDPOINT = process.env.FGP_ENDPOINT;
 const API_KEY = process.env.FGP_API_KEY;
@@ -70,13 +71,13 @@ const getSingleStockData = async (
   );
 
   const financialsData = financialMerging(resolvedFinancials);
+  //console.log(`Merged financials data for >>>`, financialsData);
 
   return financialsData;
 };
 
 export const getGlobalStockData = async () => {
   try {
-    // TESTING
     const symbols = ["AAPL", "MSFT"];
 
     const allStocksDataPromise = symbols.map((symbol) =>
@@ -93,8 +94,7 @@ export const getGlobalStockData = async () => {
       throw new Error("No results returned from stock data fetch");
     }
 
-    console.log("Fetched stock data: XXXXX");
-    return results;
+    return resolveGlobalStockData(results);
   } catch (error) {
     console.error("Error fetching and saving stock data:", error);
     return undefined;

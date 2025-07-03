@@ -4,11 +4,10 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { SAPData } from "@/lib/S&P500_symbols";
 import { TSAPData } from "@/lib/types";
-import { list } from "postcss";
 
 const NavSearch = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [data, setData] = useState<TSAPData>(SAPData);
+  const [data,] = useState<TSAPData>(SAPData);
   const [searchResults, setSearchResults] = useState<TSAPData>([]);
 
   const handleSearch = (query: string) => {
@@ -19,8 +18,8 @@ const NavSearch = () => {
         item.Security.toLowerCase().includes(query.toLowerCase()
         ))
       )
-      setSearchResults(searchedCompanies);
 
+      setSearchResults(searchedCompanies);
     } else {
       // Reset or clear search results
       console.log("Search cleared");
@@ -48,7 +47,7 @@ const NavSearch = () => {
 
       {isOpen && (
         <div className="absolute top-12 left-0 min-w bg-white shadow-lg rounded-lg">
-          <ul className="max-h-96 overflow-y-auto">
+          <ul className="max-h-96 overflow-y-auto shadow-md shadow-gray-400">
             {searchResults.length > 0 ?
               searchResults.map((item, index) => (
                 <div className="flex justify-between items-center space-y-2 gap-16 hover:bg-slate-200 px-4" key={index}>
@@ -57,9 +56,8 @@ const NavSearch = () => {
                 </div>
               ))
               :
-              <><p>no result</p></>
+              <p className="h-20 w-96 mt-12 px-10 font-semibold text-lg">no result</p>
             }
-
           </ul>
         </div>
       )
