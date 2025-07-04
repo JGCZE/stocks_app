@@ -57,8 +57,6 @@ const getSingleStockData = async (
   const [fetchedCFStatement, fetchedIncomeStatement] = await Promise.all([
     fetchFMP(symbol, "cash-flow-statement"),
     fetchFMP(symbol, "income-statement"),
-    // TEMPORARY DISABLED BECAUSE OF API CHANGES FROM THEIR SIDE
-    //fetchFMP(symbol, "key-metrics"),
   ]);
 
   if (!fetchedCFStatement || !fetchedIncomeStatement) {
@@ -71,7 +69,6 @@ const getSingleStockData = async (
   );
 
   const financialsData = financialMerging(resolvedFinancials);
-  //console.log(`Merged financials data for >>>`, financialsData);
 
   return financialsData;
 };

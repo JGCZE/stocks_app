@@ -1,4 +1,4 @@
-import { TSAPData } from "./types";
+import { TSAPData } from "../../lib/types";
 
 export const SAPData: TSAPData = [
   {

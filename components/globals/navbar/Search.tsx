@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { SAPData } from "@/lib/S&P500_symbols";
+import { SAPData } from "@/public/StocksStaticData/S&P500_symbols";
 import { TSAPData } from "@/lib/types";
 
 const NavSearch = () => {
