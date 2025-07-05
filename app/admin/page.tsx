@@ -1,14 +1,11 @@
 import React from "react";
 import { StockDataManager } from "./components/StockDataManager";
+import { saveStocksToDB } from "@/actions/fetchAndSave";
 
 const Admin = async () => {
-
-  return (
-    <div>
-      <p> this button fetch all 10 stocks data </p>
-      <StockDataManager />
-    </div>
-  );
+  saveStocksToDB();
+  return <StockDataManager />;
+  /* TODO něco domyslet, info o posledním ukládání, možná logování errorů apod */
 };
 
 export default Admin;

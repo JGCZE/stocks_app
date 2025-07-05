@@ -1,8 +1,11 @@
 "use server";
 
+import { connectDB } from "@/lib/dbConnection";
+import { StockModel } from "@/lib/models/StockSchema";
 import financialMerging from "@/lib/resolvers/financials/financialsMerging";
 import resolveAllFinancials from "@/lib/resolvers/financials/resolveAllFinancials";
 import resolveGlobalStockData from "@/lib/resolvers/financials/resolveGlobalStockData";
+import { TFinancialsData } from "@/lib/types";
 
 const BASE_ENDPOINT = process.env.FGP_ENDPOINT;
 const API_KEY = process.env.FGP_API_KEY;
@@ -34,21 +37,6 @@ const fetchFMP = async (symbol: string, statement: string) => {
     console.error("Error fetching data:", error);
     return undefined;
   }
-};
-
-export type TFinancialsData = {
-  symbol: string;
-  date: string;
-  freeCashFlow: number;
-  capitalExpenditure: number;
-  netChangeInCash: number;
-  netDividendsPaid: number;
-  revenue: number;
-  costOfRevenue: number;
-  grossProfit: number;
-  ebitda: number;
-  netIncome: number;
-  eps: number;
 };
 
 const getSingleStockData = async (
@@ -95,5 +83,72 @@ export const getGlobalStockData = async () => {
   } catch (error) {
     console.error("Error fetching and saving stock data:", error);
     return undefined;
+  }
+};
+
+const testData = [
+  {
+    companySymbol: "AAPL",
+    data: [
+      {
+        symbol: "AAPL",
+        date: "2023-09-30",
+        revenue: 123456789,
+        ebitda: 98765432,
+      },
+      {
+        symbol: "AAPL",
+        date: "2023-06-30",
+        revenue: 112233445,
+        ebitda: 55667788,
+      },
+    ],
+  },
+  {
+    companySymbol: "MSFT",
+    data: [
+      {
+        symbol: "MSFT",
+        date: "2023-09-30",
+        revenue: 123456789,
+        ebitda: 98765432,
+      },
+      {
+        symbol: "MSFT",
+        date: "2023-06-30",
+        revenue: 112233445,
+        ebitda: 55667788,
+      },
+    ],
+  },
+];
+
+export const saveStocksToDB = async () => {
+  try {
+    await connectDB();
+
+    const bulkOprations = testData.map((stock) => ({
+      updateOne: {
+        filter: { companySymbol: stock.companySymbol },
+        update: { $set: stock },
+        upsert: true,
+      },
+    }));
+
+    const response = await StockModel.bulkWrite(bulkOprations);
+    /* wtf bulkWrite - celkem gamechanger */
+    /* todo - vrací to dobrý data z databáze, co se změnilo, kolik bylo shod apod. dalo by se pěkně využít */
+    /* musím ještě přeformátovat data :(((((  */
+
+    console.log("Response from DB:", response);
+
+    if (!response) {
+      throw new Error("Failed to save stock data to the database");
+    }
+  } catch (error) {
+    console.error("Error saving stock data to DB:", error);
+    throw new Error(
+      error instanceof Error ? error.message : "Internal server error"
+    );
   }
 };

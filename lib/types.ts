@@ -53,5 +53,26 @@ export type TSAPData = Array<{
   "Headquarters Location": string;
   CIK: number;
   "Date added": string;
-  "Founded": number | string;
-}>
+  Founded: number | string;
+}>;
+
+export type TCompleteStocksData = {
+  symbol: string;
+} & {
+  financials: Array<TFinancialsData>;
+};
+
+export type TFinancialsData = {
+  symbol: string;
+  date: string;
+  freeCashFlow: number;
+  capitalExpenditure: number;
+  netChangeInCash: number;
+  netDividendsPaid: number;
+  revenue: number;
+  costOfRevenue: number;
+  grossProfit: number;
+  ebitda: number;
+  netIncome: number;
+  eps: number;
+};
